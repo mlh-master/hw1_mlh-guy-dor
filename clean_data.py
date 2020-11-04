@@ -16,11 +16,7 @@ def rm_ext_and_nan(CTG_features, extra_feature):
     :param extra_feature: A feature to be removed
     :return: A dictionary of clean CTG called c_ctg
     """
-    # ------------------ IMPLEMENT YOUR CODE HERE:------------------------------
-
-    # --------------------------------------------------------------------------
-    return c_ctg
-
+    return {key: value.replace(r'[^\d.]+', 0, regex=True).replace(np.nan, 0) for key, value in CTG_features.items() if (key != extra_feature or type(value.values) in (int, float))}
 
 def nan2num_samp(CTG_features, extra_feature):
     """
