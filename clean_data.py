@@ -44,13 +44,10 @@ def sum_stat(c_feat):
     :param c_feat: Output of nan2num_cdf
     :return: Summary statistics as a dicionary of dictionaries (called d_summary) as explained in the notebook
     """
-    # ------------------ IMPLEMENT YOUR CODE HERE:------------------------------
     d_summary = {}
     for k,v in c_feat.items():
         d_summary[k] = {"min": v.min(),"Q1": v.quantile(q=0.25), "median": v.median(), "Q3": v.quantile(q=0.75), "max": v.max()}
-    # -------------------------------------------------------------------------
-    # return d_summary
-    pass
+    return d_summary
 
 
 def rm_outlier(c_feat, d_summary):
