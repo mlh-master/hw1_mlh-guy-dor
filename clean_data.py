@@ -16,7 +16,7 @@ def rm_ext_and_nan(CTG_features, extra_feature):
     :param extra_feature: A feature to be removed
     :return: A dictionary of clean CTG called c_ctg
     """
-    return {k: v.dropna() for k, v in CTG_features.drop(columns=['DR']).apply(pd.to_numeric, errors='coerce').items()}
+    return {k: v.dropna() for k, v in CTG_features.drop(columns=extra_feature).apply(pd.to_numeric, errors='coerce').items()}
 
 def nan2num_samp(CTG_features, extra_feature):
     """
@@ -39,7 +39,9 @@ def sum_stat(c_feat):
     :return: Summary statistics as a dicionary of dictionaries (called d_summary) as explained in the notebook
     """
     # ------------------ IMPLEMENT YOUR CODE HERE:------------------------------
-
+    d_summary = {}
+    for k,v in c_feat.items():
+        d_summary[k] = {"min": v.min(),"Q1": v.quantile(q=0.25), "median": v.median(), "Q3": v.quantile(q=0.75), "max": v.max()}
     # -------------------------------------------------------------------------
     return d_summary
 
