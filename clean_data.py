@@ -20,15 +20,21 @@ def rm_ext_and_nan(CTG_features, extra_feature):
 
 def nan2num_samp(CTG_features, extra_feature):
     """
-
     :param CTG_features: Pandas series of CTG features
     :param extra_feature: A feature to be removed
     :return: A pandas dataframe of the dictionary c_cdf containing the "clean" features
     """
-    #c_cdf = {}
-    # ------------------ IMPLEMENT YOUR CODE HERE:------------------------------
-
-    # -------------------------------------------------------------------------
+    nan_dict = pd.DataFrame({k: v for k, v in CTG_features.drop(columns=extra_feature).apply(pd.to_numeric, errors='coerce').items()})
+    c_cdf = {}
+    for key, value in nan_dict.items():
+        prob_list = value.value_counts(normalize=True)
+        clean_list = []
+        for val in value.values:
+            if np.isnan(val):
+                clean_list.append(np.random.choice(list(prob_list.keys()), 1, p=list(prob_list.values))[0])
+            else:
+                clean_list.append(val)
+        c_cdf[key] = clean_list
     return pd.DataFrame(c_cdf)
 
 
@@ -43,7 +49,8 @@ def sum_stat(c_feat):
     for k,v in c_feat.items():
         d_summary[k] = {"min": v.min(),"Q1": v.quantile(q=0.25), "median": v.median(), "Q3": v.quantile(q=0.75), "max": v.max()}
     # -------------------------------------------------------------------------
-    return d_summary
+    # return d_summary
+    pass
 
 
 def rm_outlier(c_feat, d_summary):
@@ -76,7 +83,8 @@ def phys_prior(c_cdf, feature, thresh):
     # ------------------ IMPLEMENT YOUR CODE HERE:-----------------------------
 
     # -------------------------------------------------------------------------
-    return filt_feature
+    # return filt_feature
+    pass
 
 
 def norm_standard(CTG_features, selected_feat=('LB', 'ASTV'), mode='none', flag=False):
@@ -92,4 +100,5 @@ def norm_standard(CTG_features, selected_feat=('LB', 'ASTV'), mode='none', flag=
     # ------------------ IMPLEMENT YOUR CODE HERE:------------------------------
 
     # -------------------------------------------------------------------------
-    return pd.DataFrame(nsd_res)
+    # return pd.DataFrame(nsd_res)
+    pass
