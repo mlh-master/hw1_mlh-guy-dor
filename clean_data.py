@@ -55,7 +55,12 @@ def rm_outlier(c_feat, d_summary):
     """
     c_no_outlier = {}
     # ------------------ IMPLEMENT YOUR CODE HERE:------------------------------
-
+    for k,v in c_feat.items():
+        IQR_1_5 = 1.5*(d_summary[k]["Q3"]-d_summary[k]["Q1"])
+        c_no_outlier[k]=pd.Series([])
+        for ind,val in v.iteritems():
+            if d_summary[k]["Q1"]-IQR_1_5< val <d_summary[k]["Q3"]+IQR_1_5:
+                c_no_outlier[k] = c_no_outlier[k].add(pd.Series(val, index=[ind]),fill_value=0)
     # -------------------------------------------------------------------------
     return pd.DataFrame(c_no_outlier)
 
