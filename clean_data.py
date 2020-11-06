@@ -16,7 +16,7 @@ def rm_ext_and_nan(CTG_features, extra_feature):
     :param extra_feature: A feature to be removed
     :return: A dictionary of clean CTG called c_ctg
     """
-    return {key: value.replace(r'[^\d.]+', 0, regex=True).replace(np.nan, 0) for key, value in CTG_features.items() if (key != extra_feature or type(value.values) in (int, float))}
+    return {k: v.dropna() for k, v in CTG_features.drop(columns=['DR']).apply(pd.to_numeric, errors='coerce').items()}
 
 def nan2num_samp(CTG_features, extra_feature):
     """
@@ -25,7 +25,7 @@ def nan2num_samp(CTG_features, extra_feature):
     :param extra_feature: A feature to be removed
     :return: A pandas dataframe of the dictionary c_cdf containing the "clean" features
     """
-    c_cdf = {}
+    #c_cdf = {}
     # ------------------ IMPLEMENT YOUR CODE HERE:------------------------------
 
     # -------------------------------------------------------------------------
