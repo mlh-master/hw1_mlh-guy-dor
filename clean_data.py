@@ -45,8 +45,9 @@ def sum_stat(c_feat):
     :return: Summary statistics as a dicionary of dictionaries (called d_summary) as explained in the notebook
     """
     d_summary = {}
-    for k,v in c_feat.items():
-        d_summary[k] = {"min": v.min(),"Q1": v.quantile(q=0.25), "median": v.median(), "Q3": v.quantile(q=0.75), "max": v.max()}
+    for k, v in c_feat.items():
+        d_summary[k] = {"min": v.min(), "Q1": v.quantile(q=0.25),
+                        "median": v.median(), "Q3": v.quantile(q=0.75), "max": v.max()}
     return d_summary
 
 
@@ -77,11 +78,7 @@ def phys_prior(c_cdf, feature, thresh):
     :param thresh: A numeric value of threshold
     :return: An array of the "filtered" feature called filt_feature
     """
-    # ------------------ IMPLEMENT YOUR CODE HERE:-----------------------------
-
-    # -------------------------------------------------------------------------
-    # return filt_feature
-    pass
+    return c_cdf[feature].where(lambda x: x < thresh).dropna()
 
 
 def norm_standard(CTG_features, selected_feat=('LB', 'ASTV'), mode='none', flag=False):
@@ -95,7 +92,36 @@ def norm_standard(CTG_features, selected_feat=('LB', 'ASTV'), mode='none', flag=
     """
     x, y = selected_feat
     # ------------------ IMPLEMENT YOUR CODE HERE:------------------------------
+    feat1 = CTG_features[x]
+    feat2 = CTG_features[y]
+    mean1 = np.mean(feat1)
+    mean2 = np.mean(feat2)
+    min1 = feat1.min()
+    min2 = feat2.min()
+    max1 = feat1.max()
+    max2 = feat2.max()
 
+    if mode == 'standard':
+        std1 = np.std(feat1)
+        std2 = np.std(feat2)
+        feat1 = (feat1 - mean1) / std1
+        feat2 = (feat2 - mean2) / std2
+
+    elif mode == 'MinMax':
+        feat1 = (feat1 - min1) / (min1 - max1)
+        feat2 = (feat2 - min2) / (min2 - max2)
+
+    elif mode == 'mean':
+        feat1 = (feat1 - mean1) / (min1 - max1)
+        feat2 = (feat2 - mean2) / (min2 - max2)
+
+    nsd_res = [feat1, feat2]
+
+    if flag:
+        plt.hist(feat1, bins=100)
+        plt.hist(feat2, bins=100)
+        plt.title(f"Mode: {mode}")
+        plt.legend([x, y], loc='upper right')
+        plt.show()
     # -------------------------------------------------------------------------
-    # return pd.DataFrame(nsd_res)
-    pass
+    return pd.DataFrame(nsd_res)
