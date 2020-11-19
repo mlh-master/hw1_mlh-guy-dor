@@ -16,7 +16,8 @@ def rm_ext_and_nan(CTG_features, extra_feature):
     :param extra_feature: A feature to be removed
     :return: A dictionary of clean CTG called c_ctg
     """
-    return {k: v.dropna() for k, v in CTG_features.drop(columns=extra_feature).apply(pd.to_numeric, errors='coerce').items()}
+    return {k: v.dropna() for k, v in CTG_features.drop(columns=extra_feature).apply(pd.to_numeric,
+                                                                                     errors='coerce').items()}
 
 def nan2num_samp(CTG_features, extra_feature):
     """
@@ -24,7 +25,8 @@ def nan2num_samp(CTG_features, extra_feature):
     :param extra_feature: A feature to be removed
     :return: A pandas dataframe of the dictionary c_cdf containing the "clean" features
     """
-    nan_dict = pd.DataFrame({k: v for k, v in CTG_features.drop(columns=extra_feature).apply(pd.to_numeric, errors='coerce').items()})
+    nan_dict = pd.DataFrame({k: v for k, v in CTG_features.drop(columns=extra_feature).apply(pd.to_numeric,
+                                                                                             errors='coerce').items()})
     c_cdf = {}
     for key, value in nan_dict.items():
         prob_list = value.value_counts(normalize=True)
@@ -40,20 +42,19 @@ def nan2num_samp(CTG_features, extra_feature):
 
 def sum_stat(c_feat):
     """
-
     :param c_feat: Output of nan2num_cdf
-    :return: Summary statistics as a dicionary of dictionaries (called d_summary) as explained in the notebook
+    :return: Summary statistics as a dictionary of dictionaries (called d_summary) as explained in the notebook
     """
     d_summary = {}
     for k, v in c_feat.items():
-        d_summary[k] = {"min": v.min(), "Q1": v.quantile(q=0.25),
-                        "median": v.median(), "Q3": v.quantile(q=0.75), "max": v.max()}
+        d_summary[k] = {"min": v.min(), "Q1": v.quantile(q=0.25), "median": v.median(),
+                        "Q3": v.quantile(q=0.75), "max": v.max()}
+
     return d_summary
 
 
 def rm_outlier(c_feat, d_summary):
     """
-
     :param c_feat: Output of nan2num_cdf
     :param d_summary: Output of sum_stat
     :return: Dataframe of the dictionary c_no_outlier containing the feature with the outliers removed
@@ -90,32 +91,35 @@ def norm_standard(CTG_features, selected_feat=('LB', 'ASTV'), mode='none', flag=
     # ------------------ IMPLEMENT YOUR CODE HERE:------------------------------
     feat1 = CTG_features[x]
     feat2 = CTG_features[y]
-    mean1 = np.mean(feat1)
-    mean2 = np.mean(feat2)
-    min1 = feat1.min()
-    min2 = feat2.min()
-    max1 = feat1.max()
-    max2 = feat2.max()
+    nsd_res = CTG_features
+    mean_CTG = CTG_features.mean()
+    min_CTG = CTG_features.min()
+    max_CTG = CTG_features.max()
 
     if mode == 'standard':
-        std1 = np.std(feat1)
-        std2 = np.std(feat2)
-        feat1 = (feat1 - mean1) / std1
-        feat2 = (feat2 - mean2) / std2
+        nsd_res = CTG_features.apply(lambda col: (col - col.mean()) / np.std(col), axis=0)
+        #nsd_res = (CTG_features - mean_CTG) / np.std(CTG_features)
+        #feat1 = (feat1 - mean1) / std1
+        #feat2 = (feat2 - mean2) / std2
 
     elif mode == 'MinMax':
-        feat1 = (feat1 - min1) / (min1 - max1)
-        feat2 = (feat2 - min2) / (min2 - max2)
+        #feat1 = (feat1 - min1) / (min1 - max1)
+        #feat2 = (feat2 - min2) / (min2 - max2)
+        #nsd_res = (CTG_features - min_CTG) / (CTG_features - max_CTG)
+        nsd_res = CTG_features.apply(lambda col: (col - col.min()) / (col.max() - col.min()), axis=0)
+
 
     elif mode == 'mean':
-        feat1 = (feat1 - mean1) / (min1 - max1)
-        feat2 = (feat2 - mean2) / (min2 - max2)
+        #feat1 = (feat1 - mean1) / (min1 - max1)
+        #feat2 = (feat2 - mean2) / (min2 - max2)
+        #nsd_res = (CTG_features - mean_CTG) / (CTG_features - max_CTG)
+        nsd_res = CTG_features.apply(lambda col: (col - col.mean()) / (col.max() - col.min()), axis=0)
 
-    nsd_res = [feat1, feat2]
+    #nsd_res = [feat1, feat2]
 
     if flag:
-        plt.hist(feat1, bins=100)
-        plt.hist(feat2, bins=100)
+        plt.hist(nsd_res[x], bins=100)
+        plt.hist(nsd_res[y], bins=100)
         plt.title(f"Mode: {mode}")
         plt.legend([x, y], loc='upper right')
         plt.show()

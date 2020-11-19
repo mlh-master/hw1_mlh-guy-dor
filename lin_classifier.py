@@ -20,13 +20,12 @@ def pred_log(logreg, X_train, y_train, X_test, flag=False):
     """
     # ------------------ IMPLEMENT YOUR CODE HERE:-----------------------------
     logreg.fit(X_train, y_train)
-    w_log = logreg.coef_
     if flag:
         y_pred_log = logreg.predict_proba(X_test)
     else:
         y_pred_log = logreg.predict(X_test)
     # -------------------------------------------------------------------------
-    return y_pred_log, w_log
+    return y_pred_log, logreg.coef_
 
 
 def w_no_p_table(w, features):
@@ -103,7 +102,13 @@ def odds_ratio(w, X, selected_feat='LB'):
              odds_ratio: the odds ratio of the selected feature and label
     """
     # ------------------ IMPLEMENT YOUR CODE HERE:-----------------------------
+    index = X.columns.get_loc(selected_feat)
+    w = w[0, index]
+    prob = (np.median(1 / (1 + np.exp(w * X[selected_feat]))))
+    odds = (prob / (1 - prob))
 
+    prob_plus = (np.median(1 / (1 + np.exp(w * (X[selected_feat] + 1)))))
+    odd_ratio = odds / (prob_plus / (1 - prob_plus))
     # --------------------------------------------------------------------------
 
     return odds, odd_ratio
