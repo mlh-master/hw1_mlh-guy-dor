@@ -89,33 +89,15 @@ def norm_standard(CTG_features, selected_feat=('LB', 'ASTV'), mode='none', flag=
     """
     x, y = selected_feat
     # ------------------ IMPLEMENT YOUR CODE HERE:------------------------------
-    feat1 = CTG_features[x]
-    feat2 = CTG_features[y]
     nsd_res = CTG_features
-    mean_CTG = CTG_features.mean()
-    min_CTG = CTG_features.min()
-    max_CTG = CTG_features.max()
-
     if mode == 'standard':
         nsd_res = CTG_features.apply(lambda col: (col - col.mean()) / np.std(col), axis=0)
-        #nsd_res = (CTG_features - mean_CTG) / np.std(CTG_features)
-        #feat1 = (feat1 - mean1) / std1
-        #feat2 = (feat2 - mean2) / std2
 
     elif mode == 'MinMax':
-        #feat1 = (feat1 - min1) / (min1 - max1)
-        #feat2 = (feat2 - min2) / (min2 - max2)
-        #nsd_res = (CTG_features - min_CTG) / (CTG_features - max_CTG)
         nsd_res = CTG_features.apply(lambda col: (col - col.min()) / (col.max() - col.min()), axis=0)
 
-
     elif mode == 'mean':
-        #feat1 = (feat1 - mean1) / (min1 - max1)
-        #feat2 = (feat2 - mean2) / (min2 - max2)
-        #nsd_res = (CTG_features - mean_CTG) / (CTG_features - max_CTG)
         nsd_res = CTG_features.apply(lambda col: (col - col.mean()) / (col.max() - col.min()), axis=0)
-
-    #nsd_res = [feat1, feat2]
 
     if flag:
         plt.hist(nsd_res[x], bins=100)
