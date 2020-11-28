@@ -109,7 +109,7 @@ def odds_ratio(w, X, selected_feat='LB'):
     """
     # ------------------ IMPLEMENT YOUR CODE HERE:-----------------------------
     index = X.columns.get_loc(selected_feat)
-    odds = np.median(np.exp(np.array(X @ w[0,:])))
+    odds = np.median(np.exp(np.array(X @ w[0, :])))
     odd_ratio = np.exp(w[0, index])
     # --------------------------------------------------------------------------
 
